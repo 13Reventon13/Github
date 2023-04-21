@@ -1,0 +1,161 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ABC аналіз калькулятор</title>
+  </head>
+  <body>
+    <h1>ABC аналіз калькулятор</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Назва товару</th>
+          <th>1 квартал</th>
+          <th>2 квартал</th>
+          <th>3 квартал</th>
+          <th>4 квартал</th>
+          <th>Ціна 1 товара в гривнях</th>
+          <th>Кількість продажів за 4 квартали</th>
+          <th>Загальний прибуток за 4 квартала</th>
+          <th>% від загального прибутку</th>
+          <th>Категорія ABC</th>
+          <th>Рентабельність</th>
+        </tr>
+      </thead>
+      <tbody>
+  <tr>
+    <td><input type="text" class="product"></td>
+    <td><input type="number" class="q1"></td>
+    <td><input type="number" class="q2"></td>
+    <td><input type="number" class="q3"></td>
+    <td><input type="number" class="q4"></td>
+		<td><input type="number" class="price"></td>
+    <td class="totalSales"></td>
+    <td class="totalSalesAmount"></td>
+    <td class="percentage"></td>
+    <td class="category"></td>
+    <td class="profitability"></td>
+  </tr>
+  <tr>
+    <td><input type="text" class="product"></td>
+    <td><input type="number" class="q1"></td>
+    <td><input type="number" class="q2"></td>
+    <td><input type="number" class="q3"></td>
+    <td><input type="number" class="q4"></td>
+		<td><input type="number" class="price"></td>
+    <td class="totalSales"></td>
+    <td class="totalSalesAmount"></td>
+    <td class="percentage"></td>
+    <td class="category"></td>
+    <td class="profitability"></td>
+  </tr>
+  <tr>
+    <td><input type="text" class="product"></td>
+    <td><input type="number" class="q1"></td>
+    <td><input type="number" class="q2"></td>
+    <td><input type="number" class="q3"></td>
+    <td><input type="number" class="q4"></td>
+		<td><input type="number" class="price"></td>
+    <td class="totalSales"></td>
+    <td class="totalSalesAmount"></td>
+    <td class="percentage"></td>
+    <td class="category"></td>
+    <td class="profitability"></td>
+  </tr>
+		<tr>
+    <td><input type="text" class="product"></td>
+    <td><input type="number" class="q1"></td>
+    <td><input type="number" class="q2"></td>
+    <td><input type="number" class="q3"></td>
+    <td><input type="number" class="q4"></td>
+		<td><input type="number" class="price"></td>
+    <td class="totalSales"></td>
+    <td class="totalSalesAmount"></td>
+    <td class="percentage"></td>
+    <td class="category"></td>
+    <td class="profitability"></td>
+  </tr>
+		<tr>
+    <td><input type="text" class="product"></td>
+    <td><input type="number" class="q1"></td>
+    <td><input type="number" class="q2"></td>
+    <td><input type="number" class="q3"></td>
+    <td><input type="number" class="q4"></td>
+		<td><input type="number" class="price"></td>
+    <td class="totalSales"></td>
+    <td class="totalSalesAmount"></td>
+    <td class="percentage"></td>
+    <td class="category"></td>
+    <td class="profitability"></td>
+  </tr>		
+</tbody>
+    </table>
+
+    <button onclick="calculateABCAnalysis()">Рассчитать</button>
+
+    <script>
+function calculateABCAnalysis() {
+  const table = document.querySelector("table");
+  const rows = table.rows;
+
+  let totalSalesAmount = 0;
+  let allTotalSalesAmount = 0;
+  const totalSalesAmounts = [];
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+
+    const q1 = parseFloat(row.querySelector(".q1").value) || 0;
+    const q2 = parseFloat(row.querySelector(".q2").value) || 0;
+    const q3 = parseFloat(row.querySelector(".q3").value) || 0;
+    const q4 = parseFloat(row.querySelector(".q4").value) || 0;
+    const price = parseFloat(row.querySelector(".price").value) || 0;
+
+    const totalSales = q1 + q2 + q3 + q4;
+    row.querySelector(".totalSales").textContent = totalSales;
+    const totalSalesAmountForRow = totalSales * price;
+    row.querySelector(".totalSalesAmount").textContent = totalSalesAmountForRow;
+
+    totalSalesAmount += totalSalesAmountForRow;
+    allTotalSalesAmount += totalSalesAmountForRow;
+    totalSalesAmounts.push(totalSalesAmountForRow);
+  }
+
+  let accumulatedPercentage = 0;
+
+  // Create an array of objects to store row data and index
+  const rowObjects = [];
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+
+    const totalSalesAmountForRow = totalSalesAmounts[i-1];
+
+    const percentage = (totalSalesAmountForRow / allTotalSalesAmount) * 100;
+    accumulatedPercentage += percentage;
+    row.querySelector(".percentage").textContent = accumulatedPercentage.toFixed(2);
+
+    if (accumulatedPercentage <= 70) {
+      row.querySelector(".category").textContent = "A";
+    } else if (accumulatedPercentage >= 95) {
+      row.querySelector(".category").textContent = "С";
+    } else {
+      row.querySelector(".category").textContent = "B";
+    }
+
+    const profit = totalSalesAmountForRow - totalSalesAmountForRow * 0.6;
+    row.querySelector(".profitability").textContent = profit.toFixed(2);
+
+    rowObjects.push({row, totalSalesAmount: totalSalesAmountForRow});
+  }
+
+  // Sort the array by totalSalesAmount in descending order
+  rowObjects.sort((a, b) => b.totalSalesAmount - a.totalSalesAmount);
+
+  // Move the rows in the table based on the sorted array
+  for (let i = 0; i < rowObjects.length; i++) {
+    const {row} = rowObjects[i];
+    table.appendChild(row);
+  }
+}
+
+</script>
+  </body>
+</html>
